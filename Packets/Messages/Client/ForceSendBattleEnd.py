@@ -35,7 +35,8 @@ class ForceSendBattleEnd(Writer):
 				"SkinID": [29, 0],
 				"Team": team,
 				"IsPlayer": isPlayer, 
-				"Name": Name
+				"Name": Name,
+				"powerLevel": 15
 			})
 		self.plrs["isInRealGame"] = False
 	def process(self):

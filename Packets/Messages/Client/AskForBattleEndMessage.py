@@ -28,8 +28,13 @@ class AskForBattleEndMessage(ByteStream):
 				"SkinID": self.readDataReference(),
 				"Team": self.readVInt(),
 				"IsPlayer": self.readBoolean(), 
-				"Name": self.readString()
+				"Name": self.readString(),
+				"powerLevel": 0
 			})
+		
+		for card, amount in self.player.unlocked_brawlers[str(self.plrs["Brawlers"][0]["CharacterID"][1])]["Cards"].items():
+			if not Cards().isUnlock(card):
+				self.plrs["Brawlers"][0]["powerLevel"] += amount
 		self.plrs["isInRealGame"] = True
 	def process(self):
 		
