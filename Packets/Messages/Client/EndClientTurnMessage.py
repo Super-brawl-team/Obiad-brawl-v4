@@ -15,19 +15,20 @@ class EndClientTurnMessage(ByteStream):
         self.player = player
 
     def decode(self):
-        self.isCommand = self.readBoolean()
-        self.readVInt()
-        self.readVInt()
-        self.commandAmount = self.readVInt()
-        self.commandID = self.readVInt() 
+        self.endClientTurn = {}
+        self.endClientTurn["isCommand"] = self.readBoolean()
+        self.endClientTurn["unk"] = self.readVInt()
+        self.endClientTurn["unk2"] = self.readVInt()
+        self.endClientTurn["commandAmount"] = self.readVInt()
+        self.endClientTurn["commandID"] = self.readVInt()
 
     def process(self):
-        if self.commandID in commands:
-                print("[*]", self.commandID, "received")
-                command = commands[self.commandID](self.device, self.player, self.data)
+        if self.endClientTurn["commandID"] in commands:
+                print("[*]", self.endClientTurn["commandID"], "received")
+                command = commands[self.endClientTurn["commandID"]](self.device, self.player, self.data)
                 command.decode()
                 command.process()
-        elif self.commandID > 0:
-                print("[*] ", self.commandID, "not handled")  
+        elif self.endClientTurn["commandID"] > 0:
+                print("[*] ", self.endClientTurn["commandID"], "not handled")  
         else:
                 print("[*] A negative length command got recieved")    

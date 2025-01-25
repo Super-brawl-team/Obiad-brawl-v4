@@ -35,10 +35,9 @@ class LoginMessage(ByteStream):
 
     def process(self):
         db = DataBase(self.player)
-        print(self.loginPayload["token"])
         if self.player.usedVersion == 4:
             if not db.is_token_in_table(self.loginPayload["token"]):
-                if self.loginPayload["token"] is None:
+                if self.loginPayload["token"] == b'':
                     self.loginPayload["token"] = self.player.token = Helpers.randomStringDigits(self)
                 else:
                     self.player.token = self.loginPayload["token"]

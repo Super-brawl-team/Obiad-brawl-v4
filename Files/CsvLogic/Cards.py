@@ -100,4 +100,22 @@ class Cards:
                     line_count += 1
 
             return BrawlersID
+        
+    def getBrawlersWithRarity(self, rarity):
+        BrawlersID = []
+
+        with open('GameAssets/csv_logic/cards.csv') as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=',')
+            line_count = 0
+            for row in csv_reader:
+
+                if line_count == 0 or line_count == 1:
+                    line_count += 1
+                else:
+                    if row[5] == 'unlock' and row[10] == rarity:
+                        if not Characters().isDisabled(row[3]):
+                          BrawlersID.append(line_count - 2)
+                    line_count += 1
+
+            return BrawlersID
     

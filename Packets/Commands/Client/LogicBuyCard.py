@@ -14,7 +14,6 @@ class LogicBuyCardCommand(ByteStream):
     def decode(self):
         self.readCommandHeader()
         self.targetCard = self.readDataReference()
-        print(self.targetCard)
 
     def process(self):
         db = DataBase(self.player)
@@ -70,5 +69,3 @@ class LogicBuyCardCommand(ByteStream):
                   }
 
         db.replaceValue('unlocked_brawlers', self.player.unlocked_brawlers)
-        
-        #AvailableServerCommandMessage(self.device, self.player, 203).Send()
