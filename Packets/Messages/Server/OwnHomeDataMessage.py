@@ -9,7 +9,7 @@ from Files.CsvLogic.Skins import Skins
 from Files.CsvLogic.Locations import Locations
 import json
 from Database.DatabaseManager import DataBase
-
+from datetime import datetime
 class OwnHomeDataMessage(Writer):
 
 	def __init__(self, device, player):
@@ -74,11 +74,12 @@ class OwnHomeDataMessage(Writer):
 		self.writeVInt(self.player.control_mode) # Control Mode [0 - Tap to move, 1 - Joystick move, 2 - Double Joysticks (prototype)]
 		self.writeBool(self.player.has_battle_hints) # is battle hints enabled
 		self.writeVInt(self.player.coinsdoubler) # coins doubler coins remaining (0 = not activated)
-		self.writeVInt(self.player.coinsbooster) # coin boost secs remaining (0 = not activated)
+		self.writeVInt(self.player.coinsbooster - int(datetime.timestamp(datetime.now()))) # coin boost secs remaining (0 = not activated)
 		self.writeVInt(0)
 		self.writeBool(False) # unknown
 		self.writeLogicLong(0, 1)
-		self.writeLogicLong(0, 1)
+
+		self.writeLogicLong(0, 1)
 		self.writeLogicLong(0, 1)
 		self.writeLogicLong(0, 1)
 		self.writeDataReference(0, 1)
@@ -94,8 +95,8 @@ class OwnHomeDataMessage(Writer):
 		self.writeVInt(50) # Coin Boost %
 		self.writeVInt(50) # Coin Doubler cost
 		self.writeVInt(1000) # Coin Doubled
-		self.writeVInt(14) # Coin Boost Days
-		self.writeVInt(500) # Minimum Brawler Trophies For Season Reset
+		self.writeVInt(7*24) # Coin Boost Hours
+		self.writeVInt(self.brawlersTrophies) # Minimum Brawler Trophies For Season Reset
 		self.writeVInt(50) # Brawler Trophy Loss Percentage in Season Reset
 		self.writeVInt(9999) # Coin Limit Remaining
 		self.writeArrayVInt([1,2,5,10,20,60]) # Duplicated Brawler Chips

@@ -191,9 +191,11 @@ class LogicGiveDeliveryItemsCommand(Writer):
                 self.rewards["rewards"][reward]["rewardID"] = 5
                 current_booster = self.player.coinsbooster
                 if (int(datetime.timestamp(datetime.now())) - current_booster) <= 0:
-                    db.replaceValue('coinsbooster', int(datetime.timestamp(datetime.now())) + 259200)
+                    self.player.coinsbooster = int(datetime.timestamp(datetime.now())) + 259200
+                    db.replaceValue('coinsbooster', self.player.coinsbooster)
                 else:
-                    db.replaceValue('coinsbooster', current_booster + 259200)
+                    self.player.coinsbooster += 259200
+                    db.replaceValue('coinsbooster', self.player.coinsbooster)
              else:
                 selectedCharacter = random.choice(Cards().getBrawlersWithRarity("super_rare"))
                 self.rewards["rewards"][reward]["amount"] = 1
