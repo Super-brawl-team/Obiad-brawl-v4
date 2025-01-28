@@ -58,7 +58,7 @@ class playerThumbnails:
             for row in csv_reader:
                   
                   if line_count == ID:
-                    requiredBrawler = row[3]
+                    requiredBrawler = row[4]
                     break
                   line_count += 1
             if requiredBrawler == None:
