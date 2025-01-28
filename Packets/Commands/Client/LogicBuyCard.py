@@ -26,7 +26,7 @@ class LogicBuyCardCommand(ByteStream):
             if str(self.targetCard[1]) in self.player.unlocked_brawlers[str(Cards().getbrawlerID(unlock_card))]["Cards"]:
                 if self.player.elexir < self.player.unlocked_brawlers[str(Cards().getbrawlerID(unlock_card))]["Cards"][str(self.targetCard[1])]:
                     return "no cheating"
-                if self.player.unlocked_brawlers[str(Cards().getbrawlerID(unlock_card))]["Cards"][str(self.targetCard[1])] +1 > self.maximumUpgradeLevel:
+                if self.player.unlocked_brawlers[str(Cards().getbrawlerID(unlock_card))]["Cards"][str(self.targetCard[1])] +1 > self.maximumUpgradeLevel:              
                     return "no cheating"
                 self.player.unlocked_brawlers[str(Cards().getbrawlerID(unlock_card))]["Cards"][str(self.targetCard[1])] +=1
                 self.player.elexir -= self.player.unlocked_brawlers[str(Cards().getbrawlerID(unlock_card))]["Cards"][str(self.targetCard[1])]
@@ -39,7 +39,7 @@ class LogicBuyCardCommand(ByteStream):
             db.replaceValue("elexir", self.player.elexir)
         else:
             brawler = Cards().getbrawlerID(unlock_card)
-            Rarity = brawler
+            Rarity = Cards().getBrawlerRarity(unlock_card)
             
             if Characters().isDisabled(brawler):
                 return "no cheating"
