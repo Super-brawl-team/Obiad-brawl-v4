@@ -6,6 +6,7 @@ from Database.DatabaseManager import DataBase
 from Files.CsvLogic.Cards import Cards
 from Files.CsvLogic.Characters import Characters
 import json
+from datetime import datetime
 class BattleEndSD(Writer):
 
 	def __init__(self, device, player, plrs):
@@ -15,14 +16,6 @@ class BattleEndSD(Writer):
 		self.plrs = plrs
 		Brawlers228 = Characters().getBrawlers()
 		cards = Cards().getCards()
-		self.settings = json.load(open('Settings.json'))
-		self.maximumRank = self.settings["MaximumRank"]
-		self.maximumUpgradeLevel = self.settings["MaximumUpgradeLevel"]
-		self.requiredTrophiesForRank = ProgressStart = [0,10,20,30,40,60,80,100,120,140,160,180,220,260,300,340,380,420,460,500,550,600,650,700,750,800,850,900,950,1000,1050,1100,1150,1200]
-		if self.maximumRank <= 34:
-				self.brawlersTrophies = self.requiredTrophiesForRank[self.maximumRank-1]
-		else:
-				self.brawlersTrophies = self.requiredTrophiesForRank[33] + (50* (self.maximumRank-34))
 		super().__init__(self.device)
 
 	def encode(self):
@@ -30,15 +23,15 @@ class BattleEndSD(Writer):
 		def getBattleEndTrophies(rang, trophies):
 			
 			trophy_ranges = [
-				(0, 19, [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]),
-				(20, 39, [8, 7, 6, 5, 4, 3, 2, 1, 0, -1]),
-				(40, 69, [6, 5, 4, 3, 2, 1, 0, -1, -2, -3]),
-				(70, 99, [5, 4, 3, 2, 1, 0, -1, -2, -3, -4]),
-				(100, 199, [4, 3, 2, 1, 0, -1, -2, -3, -4, -5]),
-				(200, 299, [3, 2, 1, 0, -1, -2, -3, -4, -5, -6]),
-				(300, 399, [2, 1, 0, -1, -2, -3, -4, -5, -6, -7]),
-				(400, self.brawlersTrophies-1, [1, 0, -1, -2, -3, -4, -5, -6, -7, -8]),
-				(self.brawlersTrophies, self.brawlersTrophies, [0, -1, -2, -3, -4, -5, -6, -7, -8, -9]),
+				(0, 29, [8, 7, 5, 5, 4, 3, 2, 2, 1, 0]),
+				(30, 59, [8, 7, 5, 4, 3, 2, 1, 0, -2, -4]),
+				(60, 99, [8, 7, 5, 4, 3, 2, 1, -2, -3, -4]),
+				(100, 139, [7, 6, 4, 3, 2, 1, -1, -2, -3, -4]),
+				(140, 179, [7, 6, 4, 3, 2, 0, -1, -3, -4, -5]),
+				(180, 219, [7, 6, 4, 3, 1, 0, -2, -3, -5, -6]),
+				(220, 419, [7, 6, 4, 2, 1, -1, -2, -4, -6, -7]),
+				(420, 499, [5, 4, 2, 1, 0, -1, -3, -4, -6, -7]),
+				(500, float("inf"), [4, 3, 2, 1, 0, -1, -3, -5, -6, -7]),
 				
 			]
 			for low, high, rank_trophies in trophy_ranges:
@@ -100,13 +93,21 @@ class BattleEndSD(Writer):
 			coins = 0
 			exp = 0
 			star_player_exp = 0
+			doubled_coins = 0
+			boosted_coins = 0
 		else:
 			trophies = getBattleEndTrophies(self.plrs["BattleRank"], self.player.unlocked_brawlers[str(self.plrs["Brawlers"][0]["CharacterID"][1])]["Trophies"])
 			coins = getBattleEndCoins(self.plrs["BattleRank"])
 			exp = getBattleEndExp(self.plrs["BattleRank"])
 			star_player_exp = 10
-		if self.player.unlocked_brawlers[str(self.plrs["Brawlers"][0]["CharacterID"][1])]["Trophies"] + trophies > self.brawlersTrophies:
-			trophies = self.brawlersTrophies - self.player.unlocked_brawlers[str(self.plrs["Brawlers"][0]["CharacterID"][1])]["Trophies"] 
+			doubled_coins = coins
+			if coins > self.player.coinsdoubler:
+				doubled_coins = self.player.coinsdoubler
+			self.player.coinsdoubler -= doubled_coins
+			db.replaceValue("coinsdoubler", self.player.coinsdoubler)
+			boosted_coins = 0
+			if self.player.coinsbooster  - int(datetime.timestamp(datetime.now())) > 0:
+				boosted_coins = coins
 		self.writeVInt(5) # Battle End Game Mode (5 = Showdown. Else is 3vs3)
 		self.writeVInt(0) # Related To Coins Gained. If the Value is 1+, "All Coins collected"
 		self.writeVInt(coins) # Coins Gained
@@ -119,9 +120,9 @@ class BattleEndSD(Writer):
 		self.writeScID(28, self.player.profile_icon)  # Player Profile Icon
 		self.writeBoolean(False) # is tutorial game
 		self.writeBoolean(self.plrs["isInRealGame"]) # is in real game
-		self.writeVInt(0) # Coin Booster %
-		self.writeVInt(0) # Coin Booster Coins Gained
-		self.writeVInt(0) # Coin Doubler Coins Gained
+		self.writeVInt(50) # Coin Booster %
+		self.writeVInt(boosted_coins) # Coin Booster Coins Gained
+		self.writeVInt(doubled_coins) # Coin Doubler Coins Gained
 		
 		# Players Array
 
@@ -166,9 +167,9 @@ class BattleEndSD(Writer):
 		db.replaceValue("unlocked_brawlers", self.player.unlocked_brawlers)
 		self.player.player_experience += exp + star_player_exp
 		db.replaceValue("player_experience", self.player.player_experience)
-		self.player.gold += coins
+		self.player.gold += coins+boosted_coins+doubled_coins
 		db.replaceValue("gold", self.player.gold)
-		self.player.coins_reward = coins 
+		self.player.coins_reward = coins+doubled_coins+boosted_coins 
 		db.replaceValue("coins_reward", self.player.coins_reward)
 		
 		
@@ -181,29 +182,22 @@ class BattleEndTrio(Writer):
 		self.player = player
 		Brawlers228 = Characters().getBrawlers()
 		cards = Cards().getCards()
-		self.settings = json.load(open('Settings.json'))
-		self.maximumRank = self.settings["MaximumRank"]
-		self.maximumUpgradeLevel = self.settings["MaximumUpgradeLevel"]
-		self.requiredTrophiesForRank = ProgressStart = [0,10,20,30,40,60,80,100,120,140,160,180,220,260,300,340,380,420,460,500,550,600,650,700,750,800,850,900,950,1000,1050,1100,1150,1200]
-		if self.maximumRank <= 34:
-				self.brawlersTrophies = self.requiredTrophiesForRank[self.maximumRank-1]
-		else:
-				self.brawlersTrophies = self.requiredTrophiesForRank[33] + (50* (self.maximumRank-34))
+
 		super().__init__(self.device)
 
 	def encode(self):
 		def getBattleEndTrophies(rang, trophies):
 			
 			trophy_ranges = [
-				(0, 19, [5, 0, 0]),
-				(20, 39, [4, -1, 0]),
-				(40, 69, [4, -2, 0]),
-				(70, 99, [3, -2, 0]),
-				(100, 199, [3, -3, 0]),
-				(200, 299, [2, -3, 0]),
-				(300, 399, [2, -4, 0]),
-				(400, self.brawlersTrophies-1, [1, -4, 0]),
-				(self.brawlersTrophies, self.brawlersTrophies, [0, -5, 0]),
+				(0, 29, [6, 0, 0]),
+				(30, 59, [6, -1, 0]),
+				(60, 99, [5, -2, 0]),
+				(100, 139, [5, -2, 0]),
+				(140, 179, [5, -3, 0]),
+				(180, 219, [5, -4, 0]),
+				(220, 419, [5, -5, 0]),
+				(420, 499, [5, -6, 0]),
+				(500, float("inf"), [4, -6, 0]),
 				
 			]
 			for low, high, rank_trophies in trophy_ranges:
@@ -234,14 +228,22 @@ class BattleEndTrio(Writer):
 			coins = 0
 			exp = 0
 			star_player_exp = 0
+			doubled_coins = 0
+			boosted_coins = 0
 		else:
 			trophies = getBattleEndTrophies(self.plrs["BattleRank"], self.player.unlocked_brawlers[str(self.plrs["Brawlers"][0]["CharacterID"][1])]["Trophies"])
 			coins = getBattleEndCoins(self.plrs["BattleRank"])
 			exp = getBattleEndExp(self.plrs["BattleRank"])
 			star_player_exp = 10
-		if self.player.unlocked_brawlers[str(self.plrs["Brawlers"][0]["CharacterID"][1])]["Trophies"] + trophies > self.brawlersTrophies:
-			trophies = self.brawlersTrophies - self.player.unlocked_brawlers[str(self.plrs["Brawlers"][0]["CharacterID"][1])]["Trophies"] 
-			
+			doubled_coins = coins
+			if coins > self.player.coinsdoubler:
+				doubled_coins = self.player.coinsdoubler
+			self.player.coinsdoubler -= doubled_coins
+			db.replaceValue("coinsdoubler", self.player.coinsdoubler)
+			boosted_coins = 0
+			if self.player.coinsbooster  - int(datetime.timestamp(datetime.now())) > 0:
+				boosted_coins = coins
+
 		# Star Player State End
 
 		self.writeVInt(1) # Battle End Game Mode (5 = Showdown. Else is 3vs3)
@@ -256,9 +258,9 @@ class BattleEndTrio(Writer):
 		self.writeScID(28, self.player.profile_icon)  # Player Profile Icon
 		self.writeBoolean(False) # is tutorial game
 		self.writeBoolean(self.plrs["isInRealGame"]) # is in real game
-		self.writeVInt(0) # Coin Booster %
-		self.writeVInt(0) # Coin Booster Coins Gained
-		self.writeVInt(0) # Coin Doubler Coins Gained
+		self.writeVInt(50) # Coin Booster %
+		self.writeVInt(boosted_coins) # Coin Booster Coins Gained
+		self.writeVInt(doubled_coins) # Coin Doubler Coins Gained
 
 		# Players Array
 
@@ -299,9 +301,9 @@ class BattleEndTrio(Writer):
 		db.replaceValue("unlocked_brawlers", self.player.unlocked_brawlers)
 		self.player.player_experience += exp + star_player_exp
 		db.replaceValue("player_experience", self.player.player_experience)
-		self.player.gold += coins
+		self.player.gold += coins +boosted_coins+doubled_coins
 		db.replaceValue("gold", self.player.gold)
-		self.player.coins_reward = coins
+		self.player.coins_reward = coins+boosted_coins+doubled_coins
 		db.replaceValue("coins_reward", self.player.coins_reward)
 		# Milestones Array
 		self.writeBool(True) # Bool
