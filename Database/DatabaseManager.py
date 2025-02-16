@@ -430,6 +430,14 @@ class DataBase:
             clubData["info"]["requiredTrophies"] = trophiesNeeded
             updateQuery = "UPDATE CLubs SET data = ? WHERE club_id = ?"
             self.executeQuery(updateQuery, [json.dumps(clubData), clubId])
+    def incrementClubTrophies(self, clubId, factor):
+        query = "SELECT data FROM Clubs WHERE club_id = ?"
+        data = self.fetchOne(query, [clubId])
+        if data:
+            clubData = json.loads(data[0])
+            clubData["info"]["trhophies"] += factor
+            updateQuery = "UPDATE CLubs SET data = ? WHERE club_id = ?"
+            self.executeQuery(updateQuery, [json.dumps(clubData), clubId])
             
     def loadClubMessages(self, clubId):
         query = "SELECT data FROM ClubChats WHERE club_id = ?"

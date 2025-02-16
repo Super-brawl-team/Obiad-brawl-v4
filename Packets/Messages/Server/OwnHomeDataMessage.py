@@ -21,9 +21,6 @@ class OwnHomeDataMessage(Writer):
 	def encode(self):
 		db = DataBase(self.player)
 		db.loadAccount()
-		skins = Skins().getSkins()
-		UnlockCards = Cards().getBrawlers()
-		Brawlers228 = Characters().getBrawlers()
 		cards = Cards().getCards()
 		ressources_ids = [1, 5, 6]
 		ressources = [self.player.gold, self.player.chips, self.player.elexir]
@@ -191,13 +188,13 @@ class OwnHomeDataMessage(Writer):
 		for key, amount in cards.items():
 			self.writeScId(23, int(key))
 			self.writeVInt(amount) # upgrades count
-        
-        # ressources
+		
+		# ressources
 		for res in range(len(ressources_ids)):
 			self.writeScID(5, ressources_ids[res]) # resource 
 			self.writeVInt(ressources[res]) # count
-         
-        # cards and ressources Array End
+			
+		# cards and ressources Array End
 		
 		self.writeVInt(len(self.player.unlocked_brawlers))  # brawlers count
 		for key, brawler_id in self.player.unlocked_brawlers.items():
