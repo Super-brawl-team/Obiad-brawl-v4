@@ -22,14 +22,10 @@ class AllianceChatServer(Writer):
                     for index in range(len(clubMessages["info"]["messages"])):
                          if clubMessages["info"]["messages"][str(index)]["Tick"] == self.tick-1:
                               messageKey = str(index)
-                    print(self.tick)
-                    print(clubMessages)
                     msgCount = 1
-          print(msgCount)
           for index in range(msgCount):  # Loop through message indices
           #for index in range(0):
                message = clubMessages["info"]["messages"][messageKey]
-               print(message)
                self.writeVInt(message["EventType"])
                StreamEntryFactory.createStreamEntryByType(self, message)
           else:

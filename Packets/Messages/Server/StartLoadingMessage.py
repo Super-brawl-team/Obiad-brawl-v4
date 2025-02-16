@@ -62,5 +62,5 @@ class StartLoadingMessage(Writer):
         self.writeVint(2) # control mode
         self.writeBoolean(False) # Is spectating
 
-        self.writeScId(15, 8) # Location ID
+        self.writeScId(15, 2) # Location ID
         self.writeBoolean(False)

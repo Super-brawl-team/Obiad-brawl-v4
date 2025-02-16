@@ -9,10 +9,14 @@ class LogicGameObjectManagerServer(BitStream):
         self.writePositiveInt(2000000, 21) # global id stuffs
         self.writePositiveInt(0, 15) # fade counter
         self.writePositiveInt(1 if player.battleTicks > 900 else 0, 1) # is game finished?
+        self.writePositiveInt(1, 1)
+        self.writePositiveInt(1, 1)
+        self.writePositiveInt(0, 1)
+        self.writePositiveInt(0, 1)
         self.writePositiveInt(0, 5) # map size related
-        self.writePositiveInt(14, 6) # map size related
-        self.writePositiveInt(13, 5) # map size related
-        self.writePositiveInt(32, 6) # map size related
+        self.writePositiveInt(0, 6) # map size related
+        self.writePositiveInt(0, 5) # map size related
+        self.writePositiveInt(0, 6) # map size related
         # is wall destroyed array from the pits of hell
         '''
         for i in range(tileMap.width):
@@ -21,6 +25,7 @@ class LogicGameObjectManagerServer(BitStream):
                 if tile.Data.RespawnSeconds > 0 or tile.Data.IsDestructible:       THATS FOR SOON
                     self.writePositiveInt(0, 1)
         '''
+        """
         self.writePositiveInt(0, 1)
         self.writePositiveInt(0, 1)
         self.writePositiveInt(0, 1)
@@ -107,7 +112,9 @@ class LogicGameObjectManagerServer(BitStream):
         self.writePositiveInt(0, 1)
         self.writePositiveInt(0, 1)
         self.writePositiveInt(0, 1)
+        """
         # ulti related array
+        self.writeBoolean(False)
         self.writePositiveInt(1, 1) # unk
         self.writePositiveInt(1, 1) # has ulti
         self.writePositiveInt(1000, 10) # ulti charge (only for your player) 1000 is full ulti
@@ -125,18 +132,25 @@ class LogicGameObjectManagerServer(BitStream):
         self.writePositiveInt(1, 3) # ig collected bounty stars
         self.writePositiveInt(1, 3) # collected bounty stars for ennemies
         # kills related array
-        self.writePositiveInt(1, 6) # your bounty stars
-        self.writePositiveInt(0, 2) # kills array thing
-        self.writePositiveInt(5, 6) # bot 1 bounty stars
-        self.writePositiveInt(0, 2)
-        self.writePositiveInt(0, 6) 
-        self.writePositiveInt(0, 2)
-        self.writePositiveInt(0, 6)
-        self.writePositiveInt(0, 2)
-        self.writePositiveInt(0, 6)
-        self.writePositiveInt(0, 2)
-        self.writePositiveInt(20, 6)
-        self.writePositiveInt(0, 2)
+        
+        self.writePositiveInt(0, 7)
+        self.writePositiveInt(0, 4)
+        
+        self.writePositiveInt(0, 7)
+        self.writePositiveInt(0, 4)
+        
+        self.writePositiveInt(0, 7)
+        self.writePositiveInt(0, 4)
+        
+        self.writePositiveInt(0, 7)
+        self.writePositiveInt(0, 4)
+        
+        self.writePositiveInt(0, 7)
+        self.writePositiveInt(0, 4)
+        
+        self.writePositiveInt(0, 7)
+        self.writePositiveInt(0, 4)
+        
         # kills related array ends
         self.writePositiveInt(9, 7) # game objects count
         #  game objects ids array
@@ -202,7 +216,7 @@ class LogicGameObjectManagerServer(BitStream):
         self.writePositiveInt(0, 7) # idk
         self.writePositiveInt(0, 5) # idk
         self.writePositiveInt(800, 11) # current hp
-        self.writePositiveInt(5000, 11) # max hp
+        self.writePositiveInt(800, 11) # max hp
         self.writePositiveInt(1, 7) # items amount (here its bounty stars)
         self.writePositiveInt(0, 13) #idk
         self.writePositiveInt(0, 11) # idk
