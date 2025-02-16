@@ -4,7 +4,7 @@
 # THIS IS AN OPEN SOURCE SERVER, IT IS USED FOR SELFHOSTING OR SIMPLE HOSTING
 # INSTALLING THE IPA WITHOUT DOING NOTHING WILL OF COURSE NOT WORK, FOLLOW THE TUTORIAL PLEASE
  Yeah its obed brawl's upgrade!
-
+# Dont use the rc4 key change please, it is broken
  Enjoy tons of cool features, counting the ability to add brawlers, skins, ranks and power levles!
 
 # COMMING SOON
