@@ -1,5 +1,6 @@
 from Utils.Writer import Writer
 import random
+from Database.DatabaseManager import DataBase
 
 
 class StartLoadingMessage(Writer):
@@ -11,6 +12,8 @@ class StartLoadingMessage(Writer):
 
 
     def encode(self):
+        db = DataBase(self.player)
+        battleInfo = db.getBattleInfo([self.player.battleID])[0]
         self.writeInt(6) # Game Mode Total Players
         self.writeInt(0)
         self.writeInt(0)
@@ -27,8 +30,8 @@ class StartLoadingMessage(Writer):
              self.writeVInt(0) # ??
              self.writeVInt(0) # ???
              self.writeInt(0) # unk
-             self.writeScId(16, 0) # Player Brawler
-             self.writeScId(29, 0) # Player Skin
+             self.writeScId(16, battleInfo["gameObjects"]["csvIDArray"]["1"]["instanceID"]) # Player Brawler
+             self.writeScId(0) # Player Skin
              self.writeInt(0) # an array hmmm
         for x in range(2):
              
@@ -39,8 +42,8 @@ class StartLoadingMessage(Writer):
              self.writeVint(0) # ???
              self.writeVInt(0) # ???
              self.writeInt(0) # unk
-             self.writeScId(16, 0) # Player Brawler
-             self.writeScId(29, 0) # Player Skin
+             self.writeScId(16, battleInfo["gameObjects"]["csvIDArray"][str(x+2)]["instanceID"]) # Player Brawler
+             self.writeScId(0, 0) # Player Skin
              self.writeInt(0) # an array hmmm
         for x in range(3):
              
@@ -51,8 +54,8 @@ class StartLoadingMessage(Writer):
              self.writeVint(0) # ???
              self.writeVInt(0) # ???
              self.writeInt(0) # unk
-             self.writeScId(16, 0) # Player Brawler
-             self.writeScId(29, 0) # Player Skin
+             self.writeScId(16, battleInfo["gameObjects"]["csvIDArray"][str(x+4)]["instanceID"]) # Player Brawler
+             self.writeScId(0, 0) # Player Skin
              self.writeInt(0) # an array hmmm
              
         

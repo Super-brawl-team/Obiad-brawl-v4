@@ -39,6 +39,7 @@ class Player:
     ThreeVSThree_wins = 0
     gems = 0
     gold = 92
+    battleID = 0
     chips = 0
     elexir = 0
     coinsdoubler = 0

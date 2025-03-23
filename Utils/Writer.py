@@ -371,7 +371,7 @@ class Writer:
         else:
             self.device.SendData(self.id, self.buffer)
         
-        print('[*] {} sent'.format(self.id))
+        #print('[*] {} sent'.format(self.id))
     def SendTo(self, target):
         self.encode()
         if hasattr(self, 'version'):
@@ -379,4 +379,10 @@ class Writer:
 
         else:
             self.device.SendDataTo(self.id, self.buffer, target)
+    def SendUdp(self, target, client_address):
+        self.encode()
+        if hasattr(self, 'version'):
+            self.device.SendDataUdp(self.id, self.buffer, target, client_address, self.version)
 
+        else:
+            self.device.SendDataUdp(self.id, self.buffer, target, client_address)
