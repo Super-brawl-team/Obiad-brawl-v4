@@ -47,10 +47,14 @@ class LogicBuyCardCommand(ByteStream):
                 price = 3
             elif Rarity == 'rare':
                 price = 10
+            elif Rarity == 'super_rare':
+                price = 20
             elif Rarity == 'epic':
-                price = 70
+                price = 60
+            elif Rarity == 'mega_epic':
+                price = 200
             else:
-                price = 600
+                price = 500
             if self.player.chips < price:
                 return "no cheating"
             self.player.chips -= price

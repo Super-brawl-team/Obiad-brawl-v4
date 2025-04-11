@@ -42,7 +42,10 @@ class LoginMessage(ByteStream):
         self.loginPayload["unknownString2"] = self.readString()
         self.loginPayload["device"] = self.readString()
         self.loginPayload["systemLanguage"] = self.readVInt()
-        self.loginPayload["region"] = self.loginPayload["systemLanguage"] = self.readString().split('-')[1]
+        try:
+            self.loginPayload["region"] = self.loginPayload["systemLanguage"] = self.readString().split('-')[1]
+        except:
+            self.loginPayload["region"] = self.loginPayload["systemLanguage"] = "EN"
         self.player.usedVersion = self.loginPayload["majorVersion"]
 
     def process(self):
