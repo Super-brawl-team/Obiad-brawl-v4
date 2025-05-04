@@ -19,8 +19,12 @@ class MyAlliance(Writer):
                     self.writeString(club["info"]["name"])
                     self.writeDataReference(8, club["info"]["clubBadge"]) # club avatar
                     self.writeVInt(club["info"]["clubType"]) # Club type [1 = open, 2 = invite only, 3 = closed]
-                    self.writeVInt(club["info"]["onlineMembers"]) # players count
-                    self.writeVInt(club["info"]["trophies"]) # club trophies
+                    self.writeVInt(len(club["info"]["memberCount"])) # players count
+                    trophies = 0
+                    for token in club["info"]["memberCount"]:
+                        memberData = db.getMemberData(token)
+                        trophies += memberData["trophies"]
+                    self.writeVInt(trophies) # club trophies
                     self.writeDataReference(0, 1) # unk dataref
                     self.writeVInt(len(club["info"]["memberCount"])) # club players array naverno
                     

@@ -106,6 +106,8 @@ class LogicGiveDeliveryItemsCommand(Writer):
           if self.rewards["rewards"][reward]["rarity"] == 0:
              rewardList = ["Brawler", "Elexir"]
              selectedReward = random.choices(rewardList, weights= [10, 90], k=1)[0]
+             if len(self.player.unlocked_brawlers) == 1:
+                selectedReward = "Brawler"
              if selectedReward == "Elexir":
                 self.rewards["rewards"][reward]["amount"] = 1
                 self.rewards["rewards"][reward]["dataref"] = [23, 0]
