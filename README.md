@@ -19,7 +19,10 @@ Enjoy tons of cool features, including:
 
 ## 🚀 Coming Soon  
 - Online battle logic  
-- Online rooms  
+- Trophy season reset
+- Events logic  
+- Milestones rewards in battle end
+- Game assets site
 - "Boss fight" battle end
 
 ---
