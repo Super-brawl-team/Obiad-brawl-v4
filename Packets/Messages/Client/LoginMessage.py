@@ -14,6 +14,9 @@ import time
 from Packets.Messages.Server.TeamMessage import TeamMessage
 import json
 from Packets.Messages.Server.TeamStreamMessage import TeamStreamMessage
+from datetime import datetime
+from Utils.Utility import Utility
+from Packets.Messages.Server.FriendListMessage import FriendListMessage
 
 class LoginMessage(ByteStream):
 
@@ -62,9 +65,9 @@ class LoginMessage(ByteStream):
                     self.player.token = self.loginPayload["token"]
                 db.getPlayerId()
                 db.createAccount()
-                
-
-
+            content = open("AssetsServer/lastversion.txt", "r").read()
+            lastSHA = content.split("...")[1]
+            self.loginPayload["fingerprintData"] = Utility.getFingerprintData(lastSHA)
             # Process login information
             self.player.high_d = self.loginPayload["highID"]
             self.player.low_id = self.loginPayload["lowID"]
@@ -82,6 +85,10 @@ class LoginMessage(ByteStream):
                 self.banned_acc[str(self.player.low_id)] = {"reason": self.banned_ip[self.device.address[0]]["reason"]}
                 self.save_ban_lists()
                 return
+
+            if self.loginPayload["fingerprintSHA"] != lastSHA:
+                LoginFailedMessage(self.device, self.player,self.loginPayload,"slay", 7).Send()
+                return
             # Send success messages
             LoginOkMessage(self.device, self.player, self.loginPayload).Send()
               # 14109
@@ -92,11 +99,22 @@ class LoginMessage(ByteStream):
                 self.player.battleID = 0
                 db.replaceValue("battleID", 0)
             if self.player.battleID == 0:
+                change = True
+                if self.player.coinsbooster - int(datetime.timestamp(datetime.now())) <= 0:
+                    for x in self.player.homeNotifications:
+                        notif = self.player.homeNotifications[x]
+                        if notif["ID"] ==97 and notif["type"] ==1:
+                            change = False
+                    if change:
+                        self.player.homeNotifications[len(self.player.homeNotifications)] = {"ID": 97, "type": 1, "seen": False}
+                        db.replaceValue("homeNotifications", self.player.homeNotifications)
                 OwnHomeDataMessage(self.device, self.player).Send()
+                
                 ClanStream(self.device, self.player).Send()
                 if self.player.club_id:
                     db.onlineMembers(self.player.club_id, 1)
                 MyAlliance(self.device, self.player).Send()  # 14109
+                FriendListMessage(self.device, self.player).Send()
                 if self.player.teamID != 0:
                     if db.getGameroomInfo("info") != None:
                         playerInfo = db.getPlayerInfo(self.player.low_id)

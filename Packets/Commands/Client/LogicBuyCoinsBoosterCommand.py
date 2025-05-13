@@ -26,3 +26,9 @@ class LogicBuyCoinsBoosterCommand(ByteStream):
             self.player.coinsbooster += 7 * 24 * 60 * 60
 
         db.replaceValue('coinsbooster', self.player.coinsbooster)
+        for key in self.player.homeNotifications:
+                notif = self.player.homeNotifications[key]
+                if notif["ID"]==97 and notif["type"]==1:
+                    del self.player.homeNotifications[key]
+                    db.replaceValue("homeNotifications", self.player.homeNotifications)
+                    return

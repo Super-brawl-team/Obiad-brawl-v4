@@ -71,7 +71,7 @@ class LogicGiveDeliveryItemsCommand(Writer):
           self.rewards["rewards"][reward] = {}
           self.rewards["rewards"][reward]["rarity"] = boxID
           selectedCharacters = Cards().getBrawlersWithRarity(self.rarityByID(boxID))
-          selectedCharacters = [character for character in selectedCharacters if str(character) not in self.player.unlocked_brawlers]
+          selectedCharacters = [character for character in selectedCharacters]
           selectedCharacter = random.choice(selectedCharacters)
           self.rewards["rewards"][reward]["amount"] = 1
           self.rewards["rewards"][reward]["dataref"] = [23, selectedCharacter]

@@ -73,3 +73,4 @@ class LogicBuyCardCommand(ByteStream):
                   }
 
         db.replaceValue('unlocked_brawlers', self.player.unlocked_brawlers)
+        db.loadAccount()

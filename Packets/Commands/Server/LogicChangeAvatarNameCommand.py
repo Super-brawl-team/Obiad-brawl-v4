@@ -11,7 +11,6 @@ class LogicChangeAvatarNameCommand(Writer):
 
 
     def encode(self):
-        self.writeVInt(201)
         self.writeString(self.player.name)
         self.writeByte(0)
         self.writeVInt(1)

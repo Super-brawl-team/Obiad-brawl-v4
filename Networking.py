@@ -1,8 +1,4 @@
 import socket
-import argparse
-import time
-import os
-import binascii
 import json
 import traceback
 from Cryptography.nacl import NaCl
@@ -10,7 +6,6 @@ from threading import Thread, Lock
 from Packets.Factory import *
 from Logic.Device import Device
 from Packets.Messages.Server.LobbyInfoMessage import LobbyInfoMessage
-from Packets.Messages.Server.TeamErrorMessage import TeamErrorMessage
 from Logic.Player import Player
 from Database.DatabaseManager import DataBase
 connected_clients_count = 0
@@ -20,7 +15,6 @@ class Networking(Thread):
     Clients = {"ClientCounts": 0, "Clients": {}}
     def __init__(self):
         Thread.__init__(self)
-
         self.settings = json.load(open('Settings.json'))
         self.usedCryptography = self.settings["usedCryptography"]
         self.address = self.settings["Address"]
@@ -46,7 +40,7 @@ class Networking(Thread):
                 print(f"Connected clients: {connected_clients_count}")
             
             print('New connection from {}'.format(address[0]))
-            clientThread = ClientThread(client, address).start()
+            ClientThread(client, address).start()
 
 
 class ClientThread(Thread):
@@ -128,6 +122,7 @@ class ClientThread(Thread):
             #global connected_clients_count
 
             with client_count_lock:
+                db.replaceValue("player_status", 0)
                 if self.player.club_id !=0:
                     db.onlineMembers(self.player.club_id, -1)
                 if self.player.teamID != 0:

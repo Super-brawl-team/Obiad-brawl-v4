@@ -8,6 +8,7 @@ from Packets.Commands.Client.LogicBuyBrawlerCommand import LogicBuyBrawlerComman
 from Packets.Commands.Client.LogicBuyCoinsBoosterCommand import LogicBuyCoinsBoosterCommand
 from Packets.Commands.Client.LogicBuyCoinsDoublerCommand import LogicBuyCoinsDoublerCommand
 from Packets.Commands.Client.LogicUnlockSkinCommand import LogicUnlockSkinCommand
+from Packets.Commands.Client.LogicHandleNotificationCommand import LogicHandleNotificationCommand
 commands = {
     #203: LogicGiveDeliveryItemsCommand,
     500: LogicGatchaCommand,
@@ -18,5 +19,6 @@ commands = {
     510: LogicBuyCoinsDoublerCommand,
     511: LogicBuyCoinsBoosterCommand,
     513: LogicSelectBattleHintsCommand,
-    514: LogicBuyBrawlerCommand
+    514: LogicBuyBrawlerCommand,
+    515: LogicHandleNotificationCommand
 }

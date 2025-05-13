@@ -19,3 +19,9 @@ class LogicBuyCoinsDoublerCommand(ByteStream):
         db.replaceValue("gems", self.player.gems)
         self.player.coinsdoubler += 1000
         db.replaceValue("coinsdoubler", self.player.coinsdoubler)
+        for key in self.player.homeNotifications:
+                notif = self.player.homeNotifications[key]
+                if notif["ID"]==97 and notif["type"]==2:
+                    del self.player.homeNotifications[key]
+                    db.replaceValue("homeNotifications", self.player.homeNotifications)
+                    return

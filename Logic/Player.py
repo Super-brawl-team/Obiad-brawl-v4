@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-
+import json
 
 class Player:
-
-    
+    settings = json.load(open("Settings.json"))
+    homeNotifications = {}
     high_id = 0
     low_id = 1
     token = None
@@ -13,6 +13,7 @@ class Player:
     highest_trophies = 0
     teamID = 0
     teamStatus = 0
+    tutorialState = settings["startingTutorialState"]
     isReady = False
     selectedCard = [16, 0]
     isTeamInPracticeMode = False
